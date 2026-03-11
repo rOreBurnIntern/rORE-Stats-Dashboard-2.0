@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export async function GET(request: NextRequest) {
@@ -25,6 +26,7 @@ export async function GET(request: NextRequest) {
       .limit(limit);
 
     if (error) {
+      Sentry.captureException(error, { tags: { route: 'motherlode', operation: 'fetch' } });
       console.error('Error fetching motherlode history:', error);
       return NextResponse.json(
         { error: 'Failed to fetch motherlode history' },
@@ -46,6 +48,7 @@ export async function GET(request: NextRequest) {
       motherlode_history: history,
     });
   } catch (err) {
+    Sentry.captureException(err, { tags: { route: 'motherlode' } });
     console.error('Unexpected error in motherlode route:', err);
     return NextResponse.json(
       { error: 'Internal server error' },

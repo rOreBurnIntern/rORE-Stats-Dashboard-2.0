@@ -1,4 +1,5 @@
 import './globals.css';
+import SentryInitializer from '@/components/SentryInitializer';
 
 export const metadata = {
   title: 'rORE Stats Dashboard',
@@ -12,7 +13,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">{children}</body>
+      <body className="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+        <SentryInitializer />
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import type { Tables } from '@/types/supabase';
 
@@ -28,6 +29,7 @@ export async function GET(request: NextRequest) {
         .order('timestamp', { ascending: true });
 
       if (error) {
+        Sentry.captureException(error, { tags: { route: 'prices', operation: 'fetch-history' } });
         console.error('Error fetching price history:', error);
         return NextResponse.json(
           { error: 'Failed to fetch price history' },
@@ -49,6 +51,7 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
 
     if (error) {
+      Sentry.captureException(error, { tags: { route: 'prices', operation: 'fetch-latest' } });
       console.error('Error fetching latest price:', error);
       return NextResponse.json(
         { error: 'Failed to fetch latest price' },
@@ -70,6 +73,7 @@ export async function GET(request: NextRequest) {
       timestamp: data.timestamp,
     });
   } catch (err) {
+    Sentry.captureException(err, { tags: { route: 'prices' } });
     console.error('Unexpected error in prices route:', err);
     return NextResponse.json(
       { error: 'Internal server error' },

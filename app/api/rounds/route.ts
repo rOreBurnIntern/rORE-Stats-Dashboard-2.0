@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export async function GET(request: NextRequest) {
@@ -26,6 +27,7 @@ export async function GET(request: NextRequest) {
       .range(offset, offset + limit - 1);
 
     if (roundsError) {
+      Sentry.captureException(roundsError, { tags: { route: 'rounds', operation: 'fetch' } });
       console.error('Error fetching rounds:', roundsError);
       return NextResponse.json(
         { error: 'Failed to fetch rounds' },
@@ -45,6 +47,7 @@ export async function GET(request: NextRequest) {
       hasMore,
     });
   } catch (err) {
+    Sentry.captureException(err, { tags: { route: 'rounds' } });
     console.error('Unexpected error in rounds route:', err);
     return NextResponse.json(
       { error: 'Internal server error' },

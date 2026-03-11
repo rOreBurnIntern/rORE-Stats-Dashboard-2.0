@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import type { Views } from '@/types/supabase';
 
@@ -12,6 +13,7 @@ export async function GET(request: NextRequest) {
       .maybeSingle();
 
     if (error) {
+      Sentry.captureException(error, { tags: { route: 'stats', operation: 'fetch' } });
       console.error('Error fetching latest stats:', error);
       return NextResponse.json(
         { error: 'Failed to fetch stats' },
@@ -55,6 +57,7 @@ export async function GET(request: NextRequest) {
       motherlode_ore: data.motherlode_ore ? parseFloat(data.motherlode_ore) : null,
     });
   } catch (err) {
+    Sentry.captureException(err, { tags: { route: 'stats' } });
     console.error('Unexpected error in stats route:', err);
     return NextResponse.json(
       { error: 'Internal server error' },
