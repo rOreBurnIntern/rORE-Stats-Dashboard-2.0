@@ -28,6 +28,32 @@
       "timestamp": "2026-03-11T11:20:00Z",
       "status": "workspace_created",
       "note": "Archived old dashboards (rore-stats, rore-stats-v2-rebuild, rore-stats-v3). Fresh workspace created."
+    },
+    {
+      "timestamp": "2026-03-11T11:30:00Z",
+      "status": "database_layer_complete",
+      "note": "Supabase schema & migrations completed by Codex agent (neat-sable). Migration includes tables (rounds, price_history, sync_metadata), RLS, helper function, and latest_stats view. TypeScript types aligned. Sync scripts skeleton created. Supabase README added. Next: user must create Supabase project, run migration, add env credentials, then test sync jobs."
+    },
+    {
+      "timestamp": "2026-03-11T15:25:00Z",
+      "status": "env_configured",
+      "note": ".env.local populated with SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY."
+    },
+    {
+      "timestamp": "2026-03-11T15:30:00Z",
+      "status": "sync_jobs_tested",
+      "note": "Ran sync-prices.ts (prices inserted) and sync-rounds.ts (20 rounds backfilled). Database now has ~40 rounds and 2 price records. API data pipeline verified."
+    },
+    {
+      "timestamp": "2026-03-11T15:35:00Z",
+      "status": "api_routes_completed",
+      "note": "API routes built and verified: /api/prices, /api/stats, /api/rounds, /api/motherlode. All returning correct JSON shapes."
+    },
+    {
+      "timestamp": "2026-03-11T15:58:00Z",
+      "status": "frontend_completed",
+      "note": "Frontend pages created: app/page.tsx (dashboard with price charts, stats cards, motherlode), app/history/page.tsx (round history table with pagination). Components: PriceChart, MotherlodeChart, RoundTable. Dark mode support via Tailwind. Ready for review and deployment."
     }
-  ]
+  ],
+  "lastExtraction": "2026-03-11T12:35:00Z"
 }
