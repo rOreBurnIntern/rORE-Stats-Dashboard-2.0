@@ -1,0 +1,33 @@
+{
+  "projectId": "rore-stats-2.0",
+  "name": "rORE Stats Dashboard 2.0",
+  "status": "planned",
+  "createdAt": "2026-03-11T11:20:00Z",
+  "techStack": ["Next.js 14", "Tailwind CSS", "Supabase", "Recharts"],
+  "goals": [
+    "Live rORE/WETH price display",
+    "Current round stats (number, prize, entries, end time)",
+    "Motherlode total value and participants",
+    "Historical rounds visualization (backfilled 31k rounds)",
+    "Clean, responsive UI with dark mode"
+  ],
+  "keyFeatures": {
+    "backend": {
+      "syncJobs": ["prices", "rounds"],
+      "backfill": "31k historical rounds",
+      "database": "Supabase PostgreSQL"
+    },
+    "frontend": {
+      "charts": "Recharts (line, bar, pie)",
+      "pages": ["/", "/history", "/rounds"],
+      "apiRoutes": ["/api/prices", "/api/stats", "/api/rounds", "/api/motherlode"]
+    }
+  },
+  "statusHistory": [
+    {
+      "timestamp": "2026-03-11T11:20:00Z",
+      "status": "workspace_created",
+      "note": "Archived old dashboards (rore-stats, rore-stats-v2-rebuild, rore-stats-v3). Fresh workspace created."
+    }
+  ]
+}
