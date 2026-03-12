@@ -1,15 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { toApiRound } from '../_lib/dashboardTransforms';
 
 export async function GET(request: NextRequest) {
   try {
-    // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
     const page = parseInt(searchParams.get('page') ?? '1', 10);
     const limit = parseInt(searchParams.get('limit') ?? '50', 10);
 
-    // Validate parameters
     if (page < 1 || limit < 1 || limit > 100) {
       return NextResponse.json(
         { error: 'Invalid pagination parameters' },
@@ -19,11 +18,13 @@ export async function GET(request: NextRequest) {
 
     const offset = (page - 1) * limit;
 
-    // Fetch paginated rounds and total count
     const { data: rounds, error: roundsError, count: totalCount } = await supabaseAdmin
       .from('rounds')
-      .select('*', { count: 'exact' })
-      .order('round_number', { ascending: false })
+      .select(
+        'round_id, vaulted, winnings, motherlode_value, end_timestamp, winners, motherlode_running',
+        { count: 'exact' },
+      )
+      .order('round_id', { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (roundsError) {
@@ -38,9 +39,8 @@ export async function GET(request: NextRequest) {
     const total = totalCount ?? 0;
     const hasMore = page * limit < total;
 
-    // Return the data in the expected format
     return NextResponse.json({
-      rounds: rounds ?? [],
+      rounds: (rounds ?? []).map((round) => toApiRound(round)),
       total,
       page,
       limit,

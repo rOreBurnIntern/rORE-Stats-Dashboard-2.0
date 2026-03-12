@@ -1,24 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { toApiPrice, toApiRound, toNumber } from '../_lib/dashboardTransforms';
+
+const PRICE_SELECT = 'ore_price_usd:ore_usd, weth_price_usd:weth_usd, timestamp:api_timestamp';
 
 export async function GET(request: NextRequest) {
   try {
-    // Fetch latest price
     const { data: latestPrice, error: priceError } = await supabaseAdmin
-      .from('price_history')
-      .select('ore_price_usd, weth_price_usd')
-      .order('timestamp', { ascending: false })
+      .from('prices')
+      .select(PRICE_SELECT)
+      .order('api_timestamp', { ascending: false })
       .limit(1)
       .maybeSingle();
 
     if (priceError) {
       Sentry.captureException(priceError, { tags: { route: 'stats', operation: 'fetch-price' } });
       console.error('Error fetching latest price:', priceError);
-      // Continue; price may be null
     }
 
-    // Fetch latest round
     const { data: latestRound, error: roundError } = await supabaseAdmin
       .from('rounds')
       .select('round_id, vaulted, winnings, motherlode_value, motherlode_running, end_timestamp, winners')
@@ -29,7 +29,6 @@ export async function GET(request: NextRequest) {
     if (roundError) {
       Sentry.captureException(roundError, { tags: { route: 'stats', operation: 'fetch-round' } });
       console.error('Error fetching latest round:', roundError);
-      // Continue; round may be null
     }
 
     if (!latestRound) {
@@ -39,27 +38,14 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Build current_round object to match existing format
-    const currentRound = latestRound ? {
-      round_number: latestRound.round_id,
-      prize: JSON.stringify({
-        amount: (latestRound.vaulted + latestRound.winnings + (latestRound.motherlode_value || 0)).toFixed(8),
-        currency: 'ORE'
-      }),
-      entries: latestRound.winners,
-      start_time: null, // Not available
-      end_time: latestRound.end_timestamp,
-      status: latestRound.end_timestamp > new Date().toISOString() ? 'active' : 'completed',
-    } : null;
-
-    // Extract motherlode_ore from latest round's motherlode_running (unclaimed pool)
-    const motherlodeOre = latestRound ? String(latestRound.motherlode_running) : null;
+    const price = latestPrice ? toApiPrice(latestPrice) : null;
+    const currentRound = toApiRound(latestRound);
 
     return NextResponse.json({
-      ore_price_usd: latestPrice?.ore_price_usd ? parseFloat(latestPrice.ore_price_usd) : null,
-      weth_price_usd: latestPrice?.weth_price_usd ? parseFloat(latestPrice.weth_price_usd) : null,
+      ore_price_usd: price?.ore_price_usd ?? null,
+      weth_price_usd: price?.weth_price_usd ?? null,
       current_round: currentRound,
-      motherlode_ore: motherlodeOre ? parseFloat(motherlodeOre) : null,
+      motherlode_ore: toNumber(latestRound.motherlode_running),
     });
   } catch (err) {
     Sentry.captureException(err, { tags: { route: 'stats' } });

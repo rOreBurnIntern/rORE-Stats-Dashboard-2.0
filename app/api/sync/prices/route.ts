@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     }
     const payload = await response.json();
 
-    // Normalize payload to extract ore_price_usd and weth_price_usd
+    // Normalize payload to extract the PRD v3 prices row shape.
     const orePriceUsd = pickNumericString(payload, [
       'ore_price_usd',
       'orePriceUsd',
@@ -40,14 +40,13 @@ export async function POST(request: NextRequest) {
       throw new Error('Unable to derive ore_price_usd and weth_price_usd from prices payload.');
     }
 
-    const record: TablesInsert<'price_history'> = {
-      timestamp: pickTimestamp(payload, ['timestamp', 'updatedAt', 'fetchedAt']) ?? new Date().toISOString(),
-      ore_price_usd: orePriceUsd,
-      weth_price_usd: wethPriceUsd,
+    const record: TablesInsert<'prices'> = {
+      api_timestamp: pickTimestamp(payload, ['timestamp', 'updatedAt', 'fetchedAt']) ?? new Date().toISOString(),
+      ore_usd: orePriceUsd,
+      weth_usd: wethPriceUsd,
     };
 
-    // Insert into price_history
-    const { error: insertError } = await supabaseAdmin.from('price_history').insert(record);
+    const { error: insertError } = await supabaseAdmin.from('prices').insert(record);
     if (insertError) {
       throw insertError;
     }

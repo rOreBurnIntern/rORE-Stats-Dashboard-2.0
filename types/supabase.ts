@@ -17,51 +17,60 @@ export type Json =
 
 type PublicSchema = GenericSchema & {
   Tables: {
-    price_history: {
+    prices: {
       Row: {
-        created_at: string;
+        api_timestamp: string;
+        fetched_at: string | null;
         id: number;
-        ore_price_usd: string;
-        timestamp: string;
-        weth_price_usd: string;
+        ore_usd: string;
+        weth_usd: string;
       };
       Insert: {
-        created_at?: string;
+        api_timestamp: string;
+        fetched_at?: string | null;
         id?: number;
-        ore_price_usd: string;
-        timestamp: string;
-        weth_price_usd: string;
+        ore_usd: string;
+        weth_usd: string;
       };
       Update: {
-        created_at?: string;
+        api_timestamp?: string;
+        fetched_at?: string | null;
         id?: number;
-        ore_price_usd?: string;
-        timestamp?: string;
-        weth_price_usd?: string;
+        ore_usd?: string;
+        weth_usd?: string;
       };
       Relationships: [];
     };
     protocol_stats: {
       Row: {
-        created_at: string;
+        buried_ore: string;
+        circulating_supply: string;
+        fetched_at: string | null;
         id: number;
-        protocol_stats: Json;
-        timestamp: string;
-        updated_at: string;
+        max_supply: string;
+        motherlode: string;
+        protocol_revenue: string;
+        volume_weth: string;
       };
       Insert: {
-        created_at?: string;
+        buried_ore: string;
+        circulating_supply: string;
+        fetched_at?: string | null;
         id?: number;
-        protocol_stats?: Json;
-        timestamp: string;
-        updated_at?: string;
+        max_supply: string;
+        motherlode: string;
+        protocol_revenue: string;
+        volume_weth: string;
       };
       Update: {
-        created_at?: string;
+        buried_ore?: string;
+        circulating_supply?: string;
+        fetched_at?: string | null;
         id?: number;
-        protocol_stats?: Json;
-        timestamp?: string;
-        updated_at?: string;
+        max_supply?: string;
+        motherlode?: string;
+        protocol_revenue?: string;
+        volume_weth?: string;
       };
       Relationships: [];
     };
@@ -137,6 +146,36 @@ type PublicSchema = GenericSchema & {
         last_synced_at?: string;
         next_cursor?: string | null;
         updated_at?: string;
+      };
+      Relationships: [];
+    };
+    sync_log: {
+      Row: {
+        error_message: string | null;
+        finished_at: string | null;
+        id: number;
+        job_type: string;
+        rounds_synced: number | null;
+        started_at: string;
+        status: string;
+      };
+      Insert: {
+        error_message?: string | null;
+        finished_at?: string | null;
+        id?: number;
+        job_type: string;
+        rounds_synced?: number | null;
+        started_at: string;
+        status: string;
+      };
+      Update: {
+        error_message?: string | null;
+        finished_at?: string | null;
+        id?: number;
+        job_type?: string;
+        rounds_synced?: number | null;
+        started_at?: string;
+        status?: string;
       };
       Relationships: [];
     };

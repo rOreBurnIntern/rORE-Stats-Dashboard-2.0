@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "test": "node --test --experimental-strip-types app/api/_lib/dashboardTransforms.test.ts",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "tsc --noEmit -p tsconfig.lint.json"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.43.0",

@@ -43,7 +43,7 @@
 - Ensure idempotent operations and proper error handling.
 
 ### 3. Update Frontend to PRD Spec
-- Apply Burncoin theme (colors, branding) to all components.
+- Apply rORE theme (colors, branding) to all components.
 - Build Recharts visualizations: donut chart for motherlode distribution, bar chart for round prizes, line chart for price history.
 - Ensure motherlode calculation matches PRD formulas.
 

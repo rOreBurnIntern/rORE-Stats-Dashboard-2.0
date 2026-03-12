@@ -29,7 +29,7 @@ Key columns in `rounds`: `round_id`, `block_number`, `winner_take_all`, `motherl
 ## Remaining Tasks
 1. Add `CRON_SECRET` to Vercel env (secure cron endpoints)
 2. Build PRD-compliant sync endpoints (`/api/sync/prices`, `/api/sync/rounds`) with auth + `sync_log` tracking
-3. Update frontend to full PRD spec (Burncoin theme, Recharts donut/bar/line with motherlode calc)
+3. Update frontend to full PRD spec (rORE theme, Recharts donut/bar/line with motherlode calc)
 4. Configure `vercel.json` crons for scheduled sync jobs
 5. Test end-to-end pipeline; validate live data
 

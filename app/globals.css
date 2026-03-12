@@ -3,5 +3,24 @@
 @tailwind utilities;
 
 :root {
+  /* rORE.supply dark theme colors */
+  --rore-background: #0a0a0b;
+  --rore-card: #111113;
+  --rore-border: #1a1a1f;
+  --rore-borderHover: #27272a;
+  --rore-primary: #3b82f6;
+  --rore-secondary: #fbbf24;
+  --rore-success: #22c55e;
+  --rore-motherlode: #a855f7;
+  --rore-text: #fafafa;
+  --rore-textMuted: #a1a1aa;
+  --rore-textSubtle: #71717a;
+
+  /* Gradient for main background */
+  --rore-gradient-start: #0a0a0b;
+  --rore-gradient-mid: #111113;
+  --rore-gradient-end: #18181b;
+
+  /* Existing variable used in components */
   --relay-colors-gray-7: #27272a;
 }

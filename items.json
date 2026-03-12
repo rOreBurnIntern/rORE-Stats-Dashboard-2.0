@@ -57,7 +57,7 @@
     {
       "timestamp": "2026-03-11T16:45:00Z",
       "status": "prd_implementation_started",
-      "note": "Decision: Overwrite existing implementation to match PRD v3 spec exactly. PRD migration SQL already written (supabase/migrations/001_initial_schema.sql) but not yet applied. This will drop current tables and recreate fresh schema with tables: rounds, prices, protocol_stats, sync_log. Next: apply migration, add CRON_SECRET, build backfill script, update frontend to PRD spec (Burncoin theme, Recharts donut/bar/line with motherlode calc), configure vercel.json crons."
+      "note": "Decision: Overwrite existing implementation to match PRD v3 spec exactly. PRD migration SQL already written (supabase/migrations/001_initial_schema.sql) but not yet applied. This will drop current tables and recreate fresh schema with tables: rounds, prices, protocol_stats, sync_log. Next: apply migration, add CRON_SECRET, build backfill script, update frontend to PRD spec (rORE theme, Recharts donut/bar/line with motherlode calc), configure vercel.json crons."
     },
     {
       "timestamp": "2026-03-12T02:29:41Z",

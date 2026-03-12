@@ -1,32 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import type { Tables } from '@/types/supabase';
+import { parseHoursRange, toApiPrice } from '../_lib/dashboardTransforms';
+
+const PRICE_SELECT = 'ore_price_usd:ore_usd, weth_price_usd:weth_usd, timestamp:api_timestamp';
 
 export async function GET(request: NextRequest) {
   try {
-    // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
-    const range = searchParams.get('range');
+    const range = parseHoursRange(searchParams.get('range'));
 
-    // If range is specified, fetch price history from the last N hours
     if (range) {
-      const hours = parseInt(range, 10);
-      if (isNaN(hours) || hours <= 0) {
-        return NextResponse.json(
-          { error: 'Invalid range parameter' },
-          { status: 400 }
-        );
-      }
-
       const cutoffTime = new Date();
-      cutoffTime.setHours(cutoffTime.getHours() - hours);
+      cutoffTime.setHours(cutoffTime.getHours() - range);
 
       const { data, error } = await supabaseAdmin
-        .from('price_history')
-        .select('ore_price_usd, weth_price_usd, timestamp')
-        .gte('timestamp', cutoffTime.toISOString())
-        .order('timestamp', { ascending: true });
+        .from('prices')
+        .select(PRICE_SELECT)
+        .gte('api_timestamp', cutoffTime.toISOString())
+        .order('api_timestamp', { ascending: true });
 
       if (error) {
         Sentry.captureException(error, { tags: { route: 'prices', operation: 'fetch-history' } });
@@ -38,15 +30,21 @@ export async function GET(request: NextRequest) {
       }
 
       return NextResponse.json({
-        price_history: data ?? [],
+        price_history: (data ?? []).map(toApiPrice),
       });
     }
 
-    // No range: fetch the latest price from price_history ordered by timestamp DESC
+    if (searchParams.has('range')) {
+      return NextResponse.json(
+        { error: 'Invalid range parameter' },
+        { status: 400 }
+      );
+    }
+
     const { data, error } = await supabaseAdmin
-      .from('price_history')
-      .select('ore_price_usd, weth_price_usd, timestamp')
-      .order('timestamp', { ascending: false })
+      .from('prices')
+      .select(PRICE_SELECT)
+      .order('api_timestamp', { ascending: false })
       .limit(1)
       .maybeSingle();
 
@@ -66,12 +64,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Return the data in the expected format
-    return NextResponse.json({
-      ore_price_usd: data.ore_price_usd,
-      weth_price_usd: data.weth_price_usd,
-      timestamp: data.timestamp,
-    });
+    return NextResponse.json(toApiPrice(data));
   } catch (err) {
     Sentry.captureException(err, { tags: { route: 'prices' } });
     console.error('Unexpected error in prices route:', err);
