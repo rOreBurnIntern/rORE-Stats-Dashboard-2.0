@@ -5,14 +5,5 @@
       "use": "@vercel/next"
     }
   ],
-  "crons": [
-    {
-      "path": "/api/sync/prices",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/sync/rounds",
-      "schedule": "*/5 * * * *"
-    }
-  ]
+  "crons": []
 }
