@@ -12,7 +12,7 @@ jobs:
       - name: Sync prices
         run: |
           curl -X POST https://rore-stats-v2-rebuild.vercel.app/api/sync/prices \
-            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --fail \
             --silent \
@@ -21,7 +21,7 @@ jobs:
       - name: Sync rounds
         run: |
           curl -X POST https://rore-stats-v2-rebuild.vercel.app/api/sync/rounds \
-            -H "x-cron-secret: ${{ secrets.CRON_SECRET }}" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
             -H "Content-Type: application/json" \
             --fail \
             --silent \
