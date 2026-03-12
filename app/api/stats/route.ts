@@ -1,60 +1,65 @@
-// @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import type { Views } from '@/types/supabase';
 
 export async function GET(request: NextRequest) {
   try {
-    // Fetch the latest stats from the latest_stats view
-    const { data, error } = await supabaseAdmin
-      .from('latest_stats')
-      .select('*')
+    // Fetch latest price
+    const { data: latestPrice, error: priceError } = await supabaseAdmin
+      .from('price_history')
+      .select('ore_price_usd, weth_price_usd')
+      .order('timestamp', { ascending: false })
+      .limit(1)
       .maybeSingle();
 
-    if (error) {
-      Sentry.captureException(error, { tags: { route: 'stats', operation: 'fetch' } });
-      console.error('Error fetching latest stats:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch stats' },
-        { status: 500 }
-      );
+    if (priceError) {
+      Sentry.captureException(priceError, { tags: { route: 'stats', operation: 'fetch-price' } });
+      console.error('Error fetching latest price:', priceError);
+      // Continue; price may be null
     }
 
-    if (!data) {
+    // Fetch latest round
+    const { data: latestRound, error: roundError } = await supabaseAdmin
+      .from('rounds')
+      .select('round_id, vaulted, winnings, motherlode_value, motherlode_running, end_timestamp, winners')
+      .order('round_id', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (roundError) {
+      Sentry.captureException(roundError, { tags: { route: 'stats', operation: 'fetch-round' } });
+      console.error('Error fetching latest round:', roundError);
+      // Continue; round may be null
+    }
+
+    if (!latestRound) {
       return NextResponse.json(
         { error: 'No stats data available' },
         { status: 404 }
       );
     }
 
-    // Parse the current_round JSON if present
-    let currentRound = null;
-    if (data.current_round) {
-      try {
-        const roundData = typeof data.current_round === 'string' 
-          ? JSON.parse(data.current_round)
-          : data.current_round;
-        currentRound = {
-          round_number: roundData.round_number ?? null,
-          prize: roundData.prize ?? null,
-          entries: roundData.entries ?? null,
-          start_time: roundData.start_time ?? null,
-          end_time: roundData.end_time ?? null,
-          status: roundData.status ?? null,
-        };
-      } catch (e) {
-        console.error('Error parsing current_round:', e);
-        currentRound = null;
-      }
-    }
+    // Build current_round object to match existing format
+    const currentRound = latestRound ? {
+      round_number: latestRound.round_id,
+      prize: JSON.stringify({
+        amount: (latestRound.vaulted + latestRound.winnings + (latestRound.motherlode_value || 0)).toFixed(8),
+        currency: 'ORE'
+      }),
+      entries: latestRound.winners,
+      start_time: null, // Not available
+      end_time: latestRound.end_timestamp,
+      status: latestRound.end_timestamp > new Date().toISOString() ? 'active' : 'completed',
+    } : null;
 
-    // Return the data in the expected format
+    // Extract motherlode_ore from latest round's motherlode_running (unclaimed pool)
+    const motherlodeOre = latestRound ? String(latestRound.motherlode_running) : null;
+
     return NextResponse.json({
-      ore_price_usd: data.ore_price_usd,
-      weth_price_usd: data.weth_price_usd,
+      ore_price_usd: latestPrice?.ore_price_usd ? parseFloat(latestPrice.ore_price_usd) : null,
+      weth_price_usd: latestPrice?.weth_price_usd ? parseFloat(latestPrice.weth_price_usd) : null,
       current_round: currentRound,
-      motherlode_ore: data.motherlode_ore ? parseFloat(data.motherlode_ore) : null,
+      motherlode_ore: motherlodeOre ? parseFloat(motherlodeOre) : null,
     });
   } catch (err) {
     Sentry.captureException(err, { tags: { route: 'stats' } });

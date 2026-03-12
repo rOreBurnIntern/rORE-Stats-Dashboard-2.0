@@ -1,6 +1,6 @@
 # PROJECT STATE: rORE Stats Dashboard 2.0 — Supabase Layer
-**Date:** 2026-03-11 11:30 UTC
-**Status:** 🟢 DATABASE LAYER COMPLETED — Ready for Supabase project creation and migration run
+**Date:** 2026-03-12 02:33 UTC
+**Status:** 🟢 Backfill complete — frontend integration and deployment pending
 
 ---
 
@@ -22,37 +22,40 @@
   - `scripts/sync-rounds.ts`: fetches rounds, handles backfill cursors, updates `sync_metadata`
 - **Documentation** (`supabase/README.md`): local migration steps, env vars, integration notes
 
+### Historical Backfill
+- **Backfill completed** (2026-03-12 02:29 UTC): inserted **31,639 rounds**, `latestRoundId` 32641.
+- Data pipeline verified and ready for frontend consumption.
+
 ---
 
 ## ⏳ PENDING (Your Action Required)
 
-### 1. Supabase Project Setup
-- If you don't have a Supabase project for this dashboard, create one at supabase.com
-- Note: Project name: rORE Stats Dashboard 2.0
-- Obtain connection string (`POSTGRES_URL`) and Anon/Service keys
+### 1. Add `CRON_SECRET`
+- Generate a strong random string and add to Next.js `.env.local`:
+  ```
+  CRON_SECRET=<your-random-string>
+  ```
+- This secures the cron endpoints for scheduled sync jobs.
 
-### 2. Run Migrations
-Option A (local Supabase CLI):
-```bash
-supabase db push
-```
-Option B (SQL editor):
-- Paste contents of `supabase/migrations/001_initial_schema.sql` into Supabase SQL editor
+### 2. Build PRD-Compliant Sync Endpoints
+- Create `/api/sync/prices` and `/api/sync/rounds` with authentication (use `CRON_SECRET`).
+- Implement `sync_log` tracking to record sync attempts and outcomes.
+- Ensure idempotent operations and proper error handling.
 
-### 3. Configure Environment Variables
-Add to Next.js `.env.local`:
-```
-NEXT_PUBLIC_SUPABASE_URL=<your-project-ref>
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
-SUPABASE_SERVICE_ROLE_KEY=<service-role-key>
-```
+### 3. Update Frontend to PRD Spec
+- Apply Burncoin theme (colors, branding) to all components.
+- Build Recharts visualizations: donut chart for motherlode distribution, bar chart for round prizes, line chart for price history.
+- Ensure motherlode calculation matches PRD formulas.
 
-### 4. Test Sync Jobs
-Run locally to populate initial data:
-```bash
-npx tsx scripts/sync-prices.ts
-npx tsx scripts/sync-rounds.ts
-```
+### 4. Configure Vercel Crons
+- Update `vercel.json` with scheduled cron jobs to call `/api/sync/prices` and `/api/sync/rounds`.
+- Ensure `CRON_SECRET` is set in Vercel environment variables as well.
+
+### 5. Test and Deploy
+- Run full end-to-end test: verify cron-triggered syncs, frontend data display, and error boundaries.
+- Deploy to Vercel production and validate live data pipeline.
+
+*Note: Supabase migration and backfill are already complete. If you haven't verified data in Supabase dashboard, please do so.*
 
 ---
 

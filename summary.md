@@ -1,64 +1,39 @@
 # rORE Stats Dashboard 2.0
 
-**Last synthesized:** 2026-03-11 (Supabase live, sync verified, API routes in progress)
+**Last synthesized:** 2026-03-12 07:00 UTC (schema migrated + redeployed)
 
 ## Status
-🟢 Database operational — API routes under development
+🟢 **Live on Vercel** — https://rore-stats-v2-rebuild.vercel.app  
+Schema is PRD-aligned. Full backfill complete (32,639 rounds).
 
 ## Overview
-Clean rebuild of the rORE stats dashboard using Next.js 14 + Tailwind + Supabase. Syncs live prices and ongoing rounds data; historical backfill limited by source API (20 rounds per fetch). Interactive charts via Recharts.
+Clean rebuild of the rORE stats dashboard using Next.js 14 + Tailwind + Supabase. PRD v3 spec. Data pipeline syncs live prices and ongoing round data with historical backfill via chain API.
 
 ## Tech Stack
-- **Frontend:** Next.js 14 (App Router), Tailwind CSS
-- **Charts:** Recharts
+- **Frontend:** Next.js 14 (App Router), Tailwind CSS, Recharts
 - **Backend:** Next.js API Routes
-- **Database:** Supabase (PostgreSQL)
-- **Sync:** Incremental price and rounds fetchers
+- **Database:** Supabase (PostgreSQL) — PRD v3 schema
+- **Hosting:** Vercel
 
-## Architecture Plan
-1. Supabase project setup + schema migrations ✅
-2. Backend sync service ✅ (tested, inserting prices and rounds)
-3. API routes serving aggregated stats (in progress)
-4. Frontend dashboard with charts and responsive layout
+## Current Schema (PRD v3)
+Tables: `rounds`, `prices`, `protocol_stats`, `sync_log`  
+Key columns in `rounds`: `round_id`, `block_number`, `winner_take_all`, `motherlode_hit`, `motherlode_value`, `motherlode_running`
 
-## Key Goals
-- Display live rORE and WETH prices (USD)
-- Show current round data (number, prize, entries, end time)
-- Motherlode total value (from `latest_stats` view)
-- Round history view with filters (limited by source API)
-- Clean, responsive UI with dark mode
+## Key Milestones
+- ✅ Database schema (PRD v3) applied to Supabase
+- ✅ `rounds` table dropped (CASCADE) and recreated with PRD columns
+- ✅ `types/supabase.ts` and `scripts/sync-rounds.ts` rewritten to PRD spec
+- ✅ Full backfill: **32,639 rounds** (latest round_id: 32,641)
+- ✅ Deployed to Vercel: https://rore-stats-v2-rebuild.vercel.app
 
-## Completed Deliverables
-- SQL migration executed (tables: `rounds`, `price_history`, `sync_metadata`, `protocol_stats`; RLS; `latest_stats` view)
-- `.env.local` configured with Supabase credentials
-- Sync scripts tested and verified:
-  - `sync-prices.ts` inserts latest prices (ORE + WETH)
-  - `sync-rounds.ts` backfills available rounds (API returns ~20 per request; incremental cursor tracked)
-- Supabase README completed
-- API routes: generation in progress (subagent)
-
-## Current State
-- Supabase project: created and reachable
-- Database: schema deployed, initial data populated (~40 rounds, 2 price records)
-- Sync jobs: confirmed working via CLI
-- API routes: completed and verified (prices, stats, rounds, motherlode)
-- Frontend: completed
-  - Dashboard page with price cards, current round, motherlode stat
-  - Price and motherlode charts (Recharts, 24h price history, protocol stats over time)
-  - Round history page with paginated table
-  - Dark mode support, responsive Tailwind layout
-
-## Next Steps
-1. Review and QA locally (run `npx next dev` and test all pages)
-2. Deploy to Vercel (connect Supabase production env)
-3. Optionally: investigate archive source for full historical rounds backfill (>31k)
+## Remaining Tasks
+1. Add `CRON_SECRET` to Vercel env (secure cron endpoints)
+2. Build PRD-compliant sync endpoints (`/api/sync/prices`, `/api/sync/rounds`) with auth + `sync_log` tracking
+3. Update frontend to full PRD spec (Burncoin theme, Recharts donut/bar/line with motherlode calc)
+4. Configure `vercel.json` crons for scheduled sync jobs
+5. Test end-to-end pipeline; validate live data
 
 ## Notes
-- The `api.rore.supply/explore` endpoint returns limited rounds per request and `nextCursor` null, suggesting archive is not available via this API. Historical data may require alternative source.
-- `latest_stats` view expects `protocol_stats` table; motherlode chart will be empty until that table is populated by future sync jobs or manual backfill.
-
-## Notes
-- The `api.rore.supply/explore` endpoint returns limited rounds per request and `nextCursor` null, suggesting archive is not available via this API. Historical data may require alternative source.
-- `latest_stats` view expects `protocol_stats` table; motherlode value will be NULL until that table is populated.
-
-**Target:** Production-ready dashboard with reliable realtime data pipeline.
+- `latest_stats` view was dropped alongside old rounds table (CASCADE dependency) — needs recreation per PRD spec if required
+- `motherlode_running` computed cumulatively when `motherlode_hit = false`
+- skmd is non-technical; requires copy-paste-ready SQL and step-by-step instructions for DB operations

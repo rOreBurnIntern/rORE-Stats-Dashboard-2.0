@@ -21,6 +21,7 @@ CREATE TABLE rounds (
   winnings NUMERIC(20, 8) NOT NULL,
   motherlode_hit BOOLEAN NOT NULL DEFAULT FALSE,
   motherlode_value NUMERIC(20, 4),
+  motherlode_running NUMERIC(20, 4) NOT NULL,
   end_timestamp TIMESTAMPTZ NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
