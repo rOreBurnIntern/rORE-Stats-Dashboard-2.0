@@ -56,26 +56,26 @@ export default function HistoryPage() {
 
   if (loading && rounds.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-xl text-gray-600 dark:text-gray-300">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b] flex items-center justify-center">
+        <div className="text-xl text-rore-textMuted">Loading...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
-        <div className="text-xl text-red-600 dark:text-red-400">{error}</div>
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b] flex items-center justify-center">
+        <div className="text-xl text-red-500">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b] p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Round History</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
+          <h1 className="text-3xl font-bold text-rore-text">Round History</h1>
+          <p className="text-rore-textMuted mt-2">
             Browse past rounds ({total.toLocaleString()} total)
           </p>
         </header>
@@ -87,7 +87,7 @@ export default function HistoryPage() {
           initialHasMore={hasMore}
         />
 
-        <footer className="mt-8 text-center text-gray-500 dark:text-gray-400 text-sm">
+        <footer className="mt-8 text-center text-rore-textSubtle text-sm">
           <p>Data refreshes automatically</p>
         </footer>
       </div>

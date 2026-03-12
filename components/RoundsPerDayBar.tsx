@@ -41,7 +41,7 @@ export default function RoundsPerDayBar({ initialData }: RoundsPerDayBarProps) {
 
   if (loading) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center text-gray-500 dark:text-gray-400">
+      <div className="bg-rore-card rounded-lg shadow p-6 border border-rore-border text-center text-rore-textSubtle">
         Loading rounds per day...
       </div>
     );
@@ -49,7 +49,7 @@ export default function RoundsPerDayBar({ initialData }: RoundsPerDayBarProps) {
 
   if (dailyData.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center text-gray-500 dark:text-gray-400">
+      <div className="bg-rore-card rounded-lg shadow p-6 border border-rore-border text-center text-rore-textSubtle">
         No round data available
       </div>
     );
@@ -62,37 +62,37 @@ export default function RoundsPerDayBar({ initialData }: RoundsPerDayBarProps) {
   }));
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-      <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Rounds per Day (Last 30 Days)</h2>
+    <div className="bg-rore-card rounded-lg shadow p-6 border border-rore-border">
+      <h2 className="text-xl font-semibold mb-4 text-rore-text">Rounds per Day (Last 30 Days)</h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--relay-colors-gray-7)" />
           <XAxis 
             dataKey="label" 
             tick={{ fontSize: 12 }}
-            tickLine={{ stroke: '#9ca3af' }}
-            className="dark:text-gray-300"
+            tickLine={{ stroke: 'var(--relay-colors-gray-7)' }}
+            className="text-rore-textMuted"
           />
           <YAxis 
             tick={{ fontSize: 12 }}
-            tickLine={{ stroke: '#9ca3af' }}
-            className="dark:text-gray-300"
+            tickLine={{ stroke: 'var(--relay-colors-gray-7)' }}
+            className="text-rore-textMuted"
             allowDecimals={false}
           />
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              border: '1px solid #e5e7eb',
+              backgroundColor: '#111113',
+              border: '1px solid #1a1a1f',
               borderRadius: '0.5rem',
-              color: '#111827'
+              color: '#fafafa'
             }}
-            labelStyle={{ color: '#111827', fontWeight: 'bold' }}
+            labelStyle={{ color: '#fafafa', fontWeight: 'bold' }}
           />
           <Legend />
           <Bar 
             dataKey="count" 
             name="Rounds" 
-            fill="#ff6b35" 
+            fill="#fbbf24" 
             radius={[4, 4, 0, 0]}
           />
         </BarChart>

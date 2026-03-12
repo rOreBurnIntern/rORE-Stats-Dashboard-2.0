@@ -26,9 +26,9 @@ export default function MotherlodeAllocationDonut({ roundData }: MotherlodeAlloc
     const { vaulted, winnings, motherlode_value } = roundData;
     // Only include non-zero segments
     const segments: DonutData[] = [];
-    if (vaulted && vaulted > 0) segments.push({ name: 'Vault', value: vaulted, color: '#6366f1' });
-    if (winnings && winnings > 0) segments.push({ name: 'Winnings', value: winnings, color: '#10b981' });
-    if (motherlode_value && motherlode_value > 0) segments.push({ name: 'Motherlode', value: motherlode_value, color: '#ff6b35' });
+    if (vaulted && vaulted > 0) segments.push({ name: 'Vault', value: vaulted, color: '#3b82f6' });
+    if (winnings && winnings > 0) segments.push({ name: 'Winnings', value: winnings, color: '#22c55e' });
+    if (motherlode_value && motherlode_value > 0) segments.push({ name: 'Motherlode', value: motherlode_value, color: '#a855f7' });
 
     if (segments.length === 0) {
       setData([]);
@@ -39,7 +39,7 @@ export default function MotherlodeAllocationDonut({ roundData }: MotherlodeAlloc
 
   if (!roundData || data.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center text-gray-500 dark:text-gray-400">
+      <div className="bg-rore-card rounded-lg shadow p-6 border border-rore-border text-center text-rore-textSubtle">
         No allocation data available
       </div>
     );
@@ -53,9 +53,9 @@ export default function MotherlodeAllocationDonut({ roundData }: MotherlodeAlloc
       const item = payload[0];
       const percent = ((item.value / total) * 100).toFixed(1);
       return (
-        <div className="bg-white dark:bg-gray-800 p-2 border border-gray-200 dark:border-gray-700 rounded shadow">
-          <p className="font-medium">{item.name}</p>
-          <p>{Number(item.value).toLocaleString()} ORE ({percent}%)</p>
+        <div className="bg-rore-card p-2 border border-rore-border rounded shadow">
+          <p className="font-medium text-rore-text">{item.name}</p>
+          <p className="text-rore-textMuted">{Number(item.value).toLocaleString()} ORE ({percent}%)</p>
         </div>
       );
     }
@@ -63,8 +63,8 @@ export default function MotherlodeAllocationDonut({ roundData }: MotherlodeAlloc
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-      <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Motherlode Allocation (Latest Round)</h2>
+    <div className="bg-rore-card rounded-lg shadow p-6 border border-rore-border">
+      <h2 className="text-xl font-semibold mb-4 text-rore-text">Motherlode Allocation (Latest Round)</h2>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -85,7 +85,7 @@ export default function MotherlodeAllocationDonut({ roundData }: MotherlodeAlloc
           <Legend />
         </PieChart>
       </ResponsiveContainer>
-      <div className="mt-2 text-sm text-gray-600 dark:text-gray-400 text-center">
+      <div className="mt-2 text-sm text-rore-textMuted text-center">
         Total: {total.toLocaleString()} ORE
       </div>
     </div>

@@ -120,75 +120,75 @@ export default function HomePage() {
 
   if (loading && !stats) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] flex items-center justify-center">
-        <div className="text-xl text-gray-300">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b] flex items-center justify-center">
+        <div className="text-xl text-rore-textMuted">Loading...</div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b] flex items-center justify-center">
         <div className="text-xl text-red-500">{error}</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b] p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-8">
         <header>
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b35] to-[#ff9f1c]">
+          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rore-primary to-[#60a5fa]">
             rORE Stats Dashboard
           </h1>
-          <p className="text-gray-400 mt-2">Real-time statistics for rORE protocol</p>
+          <p className="text-rore-textMuted mt-2">Real-time statistics for rORE protocol</p>
         </header>
 
         {/* Stats Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* ORE Price Card */}
-          <div className="bg-gray-900/50 backdrop-blur border border-gray-700 rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-400 uppercase">ORE Price</h3>
-            <p className="mt-2 text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ff6b35] to-[#ff9f1c]">
+          <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
+            <h3 className="text-sm font-medium text-rore-textMuted uppercase">ORE Price</h3>
+            <p className="mt-2 text-3xl font-bold text-rore-primary">
               {formatCurrency(stats?.ore_price_usd || null)}
             </p>
           </div>
 
           {/* WETH Price Card */}
-          <div className="bg-gray-900/50 backdrop-blur border border-gray-700 rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-400 uppercase">WETH Price</h3>
-            <p className="mt-2 text-3xl font-bold text-indigo-400">
+          <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
+            <h3 className="text-sm font-medium text-rore-textMuted uppercase">WETH Price</h3>
+            <p className="mt-2 text-3xl font-bold text-rore-secondary">
               {formatCurrency(stats?.weth_price_usd || null)}
             </p>
           </div>
 
           {/* Current Round Card */}
-          <div className="bg-gray-900/50 backdrop-blur border border-gray-700 rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-400 uppercase">Current Round</h3>
+          <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
+            <h3 className="text-sm font-medium text-rore-textMuted uppercase">Current Round</h3>
             {stats?.current_round ? (
               <div className="mt-2 space-y-1">
-                <p className="text-lg font-bold text-white">
+                <p className="text-lg font-bold text-rore-text">
                   #{stats.current_round.round_number}
                 </p>
-                <p className="text-sm text-gray-300">
+                <p className="text-sm text-rore-textMuted">
                   Prize: {formatPrizeDisplay(stats.current_round.prize)}
                 </p>
-                <p className="text-sm text-gray-300">
+                <p className="text-sm text-rore-textMuted">
                   Entries: {formatNumber(stats.current_round.entries)}
                 </p>
-                <p className="text-sm font-medium text-gray-200">
+                <p className="text-sm font-medium text-rore-text">
                   Ends in: {formatCountdown(stats.current_round.end_time)}
                 </p>
               </div>
             ) : (
-              <p className="mt-2 text-gray-500">No active round</p>
+              <p className="mt-2 text-rore-textSubtle">No active round</p>
             )}
           </div>
 
           {/* Motherlode Card */}
-          <div className="bg-gray-900/50 backdrop-blur border border-gray-700 rounded-lg shadow p-6">
-            <h3 className="text-sm font-medium text-gray-400 uppercase">Motherlode Total</h3>
-            <p className="mt-2 text-3xl font-bold text-emerald-400">
+          <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
+            <h3 className="text-sm font-medium text-rore-textMuted uppercase">Motherlode Total</h3>
+            <p className="mt-2 text-3xl font-bold text-rore-success">
               {formatNumber(stats?.motherlode_ore || null)} ORE
             </p>
           </div>
@@ -207,7 +207,7 @@ export default function HomePage() {
         {/* <MotherlodeChart data={[]} /> Uncomment if desired */}
 
         {/* Footer */}
-        <footer className="text-center text-gray-500 text-sm py-4">
+        <footer className="text-center text-rore-textSubtle text-sm py-4">
           <p>Last updated: {new Date().toLocaleTimeString()}</p>
         </footer>
       </div>

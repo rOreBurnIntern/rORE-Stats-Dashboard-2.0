@@ -67,51 +67,51 @@ export default function RoundTable({ initialRounds, initialPage, initialHasMore 
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+    <div className="bg-rore-card rounded-lg shadow overflow-hidden border border-rore-border">
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-900">
+        <table className="min-w-full divide-y divide-rore-border">
+          <thead className="bg-[#0d0d0f]">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Round</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Prize</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Entries</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Start</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">End</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-rore-textMuted uppercase tracking-wider">Round</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-rore-textMuted uppercase tracking-wider">Prize</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-rore-textMuted uppercase tracking-wider">Entries</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-rore-textMuted uppercase tracking-wider">Start</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-rore-textMuted uppercase tracking-wider">End</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-rore-textMuted uppercase tracking-wider">Status</th>
             </tr>
           </thead>
-          <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+          <tbody className="bg-rore-card divide-y divide-rore-border">
             {rounds.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                <td colSpan={6} className="px-6 py-8 text-center text-rore-textSubtle">
                   No rounds found
                 </td>
               </tr>
             ) : (
               rounds.map((round) => (
-                <tr key={round.round_number} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                <tr key={round.round_number} className="hover:bg-rore-border/30">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-rore-text">
                     #{round.round_number}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-rore-textMuted">
                     {formatPrize(round.prize)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-rore-textMuted">
                     {round.entries.toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-rore-textMuted">
                     {formatDate(round.start_time)}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-rore-textMuted">
                     {formatDate(round.end_time)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                       round.status === 'completed' 
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                        ? 'bg-green-500/20 text-green-500'
                         : round.status === 'active'
-                        ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                        : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                        ? 'bg-blue-500/20 text-blue-500'
+                        : 'bg-gray-500/20 text-gray-400'
                     }`}>
                       {round.status}
                     </span>
@@ -124,27 +124,27 @@ export default function RoundTable({ initialRounds, initialPage, initialHasMore 
       </div>
 
       {/* Pagination controls */}
-      <div className="bg-gray-50 dark:bg-gray-900 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700">
+      <div className="bg-[#0d0d0f] px-4 py-3 flex items-center justify-between border-t border-rore-border">
         <div className="flex-1 flex justify-between sm:hidden">
           <button
             onClick={handlePrev}
             disabled={page <= 1 || loading}
-            className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="relative inline-flex items-center px-4 py-2 border border-rore-border text-sm font-medium rounded-md text-rore-textMuted bg-rore-card hover:bg-rore-border/30 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Previous
           </button>
           <button
             onClick={handleNext}
             disabled={!hasMore || loading}
-            className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="ml-3 relative inline-flex items-center px-4 py-2 border border-rore-border text-sm font-medium rounded-md text-rore-textMuted bg-rore-card hover:bg-rore-border/30 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Next
           </button>
         </div>
         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
           <div>
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              Page <span className="font-medium">{page}</span>
+            <p className="text-sm text-rore-textMuted">
+              Page <span className="font-medium text-rore-text">{page}</span>
             </p>
           </div>
           <div>
@@ -152,7 +152,7 @@ export default function RoundTable({ initialRounds, initialPage, initialHasMore 
               <button
                 onClick={handlePrev}
                 disabled={page <= 1 || loading}
-                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-rore-border bg-rore-card text-sm font-medium text-rore-textMuted hover:bg-rore-border/30 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="sr-only">Previous</span>
                 <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -163,7 +163,7 @@ export default function RoundTable({ initialRounds, initialPage, initialHasMore 
                 onClick={handleNext}
                 disabled={!hasMore || loading}
                 aria-label="Next page"
-                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-rore-border bg-rore-card text-sm font-medium text-rore-textMuted hover:bg-rore-border/30 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="sr-only">Next</span>
                 <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">

@@ -14,7 +14,7 @@ interface MotherlodeChartProps {
 export default function MotherlodeChart({ data }: MotherlodeChartProps) {
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 text-center text-gray-500 dark:text-gray-400">
+      <div className="bg-rore-card rounded-lg shadow p-6 border border-rore-border text-center text-rore-textSubtle">
         No motherlode data available
       </div>
     );
@@ -35,49 +35,49 @@ export default function MotherlodeChart({ data }: MotherlodeChartProps) {
   const maxMotherlode = Math.max(...data.map(d => d.motherlode_ore));
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-      <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Motherlode Over Time</h2>
+    <div className="bg-rore-card rounded-lg shadow p-6 border border-rore-border">
+      <h2 className="text-xl font-semibold mb-4 text-rore-text">Motherlode Over Time</h2>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" className="dark:stroke-gray-700" />
+          <CartesianGrid strokeDasharray="3 3" stroke="var(--relay-colors-gray-7)" />
           <XAxis 
             dataKey="time" 
             tick={{ fontSize: 12 }}
-            tickLine={{ stroke: '#9ca3af' }}
+            tickLine={{ stroke: 'var(--relay-colors-gray-7)' }}
             angle={-45}
             textAnchor="end"
             height={80}
-            className="dark:text-gray-300"
+            className="text-rore-textMuted"
           />
           <YAxis 
             tick={{ fontSize: 12 }}
-            tickLine={{ stroke: '#9ca3af' }}
-            className="dark:text-gray-300"
+            tickLine={{ stroke: 'var(--relay-colors-gray-7)' }}
+            className="text-rore-textMuted"
             domain={['auto', 'auto']}
             tickFormatter={(value) => `${(value / 1e6).toFixed(1)}M`}
           />
           <Tooltip 
             contentStyle={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              border: '1px solid #e5e7eb',
+              backgroundColor: '#111113',
+              border: '1px solid #1a1a1f',
               borderRadius: '0.5rem',
-              color: '#111827'
+              color: '#fafafa'
             }}
-            labelStyle={{ color: '#111827', fontWeight: 'bold' }}
+            labelStyle={{ color: '#fafafa', fontWeight: 'bold' }}
             formatter={(value: any) => [`${Number(value).toLocaleString()} ORE`, 'Motherlode']}
           />
           <Legend />
           <Line 
             type="monotone" 
             dataKey="motherlode_ore" 
-            stroke="#10b981" 
+            stroke="#a855f7" 
             name="Motherlode ORE"
             strokeWidth={2}
             dot={false}
           />
         </LineChart>
       </ResponsiveContainer>
-      <div className="mt-2 text-sm text-gray-600 dark:text-gray-400 text-right">
+      <div className="mt-2 text-sm text-rore-textMuted text-right">
         Peak: {maxMotherlode.toLocaleString()} ORE
       </div>
     </div>
