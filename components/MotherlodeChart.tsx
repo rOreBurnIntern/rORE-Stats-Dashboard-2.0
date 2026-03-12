@@ -1,10 +1,15 @@
 'use client';
 
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useRef } from 'react';
+import { Line } from 'react-chartjs-2';
+import type { ChartData, ChartOptions } from 'chart.js';
+
+import { ChartJS } from './chartSetup';
 
 interface MotherlodePoint {
-  timestamp: string;
+  round_number: number;
   motherlode_ore: number;
+  timestamp: string;
 }
 
 interface MotherlodeChartProps {
@@ -12,6 +17,8 @@ interface MotherlodeChartProps {
 }
 
 export default function MotherlodeChart({ data }: MotherlodeChartProps) {
+  const chartRef = useRef<ChartJS<'line'> | null>(null);
+
   if (!data || data.length === 0) {
     return (
       <div className="bg-rore-card rounded-lg shadow p-6 border border-rore-border text-center text-rore-textSubtle">
@@ -20,63 +27,117 @@ export default function MotherlodeChart({ data }: MotherlodeChartProps) {
     );
   }
 
-  // Format data for chart
-  const chartData = data.map((item) => ({
-    ...item,
-    time: new Date(item.timestamp).toLocaleDateString([], { 
-      month: 'short', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }),
-  }));
+  const maxMotherlode = Math.max(...data.map((d) => d.motherlode_ore));
+  const chartData: ChartData<'line'> = {
+    datasets: [
+      {
+        label: 'Motherlode ORE',
+        data: data.map((item) => ({
+          x: item.round_number,
+          y: item.motherlode_ore,
+        })),
+        borderColor: '#a855f7',
+        backgroundColor: 'rgba(168, 85, 247, 0.16)',
+        fill: true,
+        tension: 0.15,
+        pointRadius: 0,
+        pointHitRadius: 8,
+      },
+    ],
+  };
 
-  // Calculate useful stats for formatting
-  const maxMotherlode = Math.max(...data.map(d => d.motherlode_ore));
+  const options: ChartOptions<'line'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: {
+      intersect: false,
+      mode: 'nearest',
+    },
+    scales: {
+      x: {
+        type: 'linear',
+        ticks: {
+          color: '#a1a1aa',
+        },
+        grid: {
+          color: '#1a1a1f',
+        },
+        title: {
+          display: true,
+          text: 'Round Number',
+          color: '#fafafa',
+        },
+      },
+      y: {
+        ticks: {
+          color: '#a1a1aa',
+          callback: (value) => `${Number(value).toLocaleString()} ORE`,
+        },
+        grid: {
+          color: '#1a1a1f',
+        },
+        title: {
+          display: true,
+          text: 'Motherlode',
+          color: '#fafafa',
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        callbacks: {
+          title: (items) => {
+            const firstItem = items[0];
+            return firstItem ? `Round #${Number(firstItem.parsed.x).toLocaleString()}` : '';
+          },
+          label: (context) => `${Number(context.parsed.y).toLocaleString()} ORE`,
+          footer: (items) => {
+            const point = data[items[0]?.dataIndex ?? -1];
+            return point ? new Date(point.timestamp).toLocaleString() : '';
+          },
+        },
+      },
+      zoom: {
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true,
+          },
+          mode: 'x',
+        },
+        pan: {
+          enabled: true,
+          mode: 'x',
+        },
+      },
+    },
+  };
 
   return (
     <div className="bg-rore-card rounded-lg shadow p-6 border border-rore-border">
-      <h2 className="text-xl font-semibold mb-4 text-rore-text">Motherlode Over Time</h2>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="var(--relay-colors-gray-7)" />
-          <XAxis 
-            dataKey="time" 
-            tick={{ fontSize: 12 }}
-            tickLine={{ stroke: 'var(--relay-colors-gray-7)' }}
-            angle={-45}
-            textAnchor="end"
-            height={80}
-            className="text-rore-textMuted"
-          />
-          <YAxis 
-            tick={{ fontSize: 12 }}
-            tickLine={{ stroke: 'var(--relay-colors-gray-7)' }}
-            className="text-rore-textMuted"
-            domain={['auto', 'auto']}
-            tickFormatter={(value) => `${(value / 1e6).toFixed(1)}M`}
-          />
-          <Tooltip 
-            contentStyle={{ 
-              backgroundColor: '#111113',
-              border: '1px solid #1a1a1f',
-              borderRadius: '0.5rem',
-              color: '#fafafa'
-            }}
-            labelStyle={{ color: '#fafafa', fontWeight: 'bold' }}
-            formatter={(value: any) => [`${Number(value).toLocaleString()} ORE`, 'Motherlode']}
-          />
-          <Legend />
-          <Line 
-            type="monotone" 
-            dataKey="motherlode_ore" 
-            stroke="#a855f7" 
-            name="Motherlode ORE"
-            strokeWidth={2}
-            dot={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-rore-text">Motherlode Over Time</h2>
+          <p className="text-sm text-rore-textMuted">
+            Mouse wheel zoom, pinch zoom, and drag to pan across the full history.
+          </p>
+        </div>
+        <button
+          className="inline-flex items-center justify-center rounded-md border border-rore-border bg-[#18181b] px-3 py-2 text-sm font-medium text-rore-text transition hover:border-rore-borderHover"
+          onClick={() => chartRef.current?.resetZoom()}
+          type="button"
+        >
+          Reset Zoom
+        </button>
+      </div>
+      <div className="h-[360px]">
+        <Line data={chartData} options={options} ref={chartRef} />
+      </div>
       <div className="mt-2 text-sm text-rore-textMuted text-right">
         Peak: {maxMotherlode.toLocaleString()} ORE
       </div>

@@ -1,85 +1,25 @@
-'use client';
+import BlockPerformanceBar from '@/components/BlockPerformanceBar';
+import MotherlodeChart from '@/components/MotherlodeChart';
+import WinnerTypesPie from '@/components/WinnerTypesPie';
+import { getDbStatsData } from '@/lib/db-stats';
 
-import { useEffect, useState } from 'react';
-import PriceChart from '@/components/PriceChart';
-import MotherlodeAllocationDonut from '@/components/MotherlodeAllocationDonut';
-import RoundsPerDayBar from '@/components/RoundsPerDayBar';
+export const revalidate = 60;
 
-interface Stats {
-  ore_price_usd: number | null;
-  weth_price_usd: number | null;
-  current_round: {
-    round_number: number | null;
-    prize: string | null;
-    entries: number | null;
-    end_time: string | null;
-    status: string | null;
-  } | null;
-  motherlode_ore: number | null;
-}
+export default async function HomePage() {
+  let dashboardData: Awaited<ReturnType<typeof getDbStatsData>>;
 
-interface PriceHistoryPoint {
-  ore_price_usd: number;
-  weth_price_usd: number;
-  timestamp: string;
-}
+  try {
+    dashboardData = await getDbStatsData();
+  } catch {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b]">
+        <div className="text-xl text-red-500">Failed to load dashboard data</div>
+      </div>
+    );
+  }
 
-interface LatestRound {
-  vaulted: number;
-  winnings: number;
-  motherlode_value: number | null;
-}
-
-export default function HomePage() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [priceHistory, setPriceHistory] = useState<PriceHistoryPoint[]>([]);
-  const [latestRound, setLatestRound] = useState<LatestRound | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Fetch stats
-      const statsRes = await fetch('/api/stats');
-      if (!statsRes.ok) {
-        throw new Error('Failed to fetch stats');
-      }
-      const statsData = await statsRes.json();
-
-      // Fetch price history (last 24h)
-      const priceRes = await fetch('/api/prices?range=24h');
-      const priceData = await priceRes.json();
-
-      // Fetch latest round for allocation donut
-      const roundRes = await fetch('/api/latest-round');
-      const roundData = await roundRes.json();
-
-      setStats(statsData);
-      setPriceHistory(priceData.price_history || []);
-      if (roundData.vaulted !== undefined) {
-        setLatestRound({
-          vaulted: roundData.vaulted,
-          winnings: roundData.winnings,
-          motherlode_value: roundData.motherlode_value,
-        });
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load data');
-      console.error('Fetch error:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-    // Refresh every 60 seconds
-    const interval = setInterval(fetchData, 60000);
-    return () => clearInterval(interval);
-  }, []);
+  const { latestPrices, latestRound, motherlodeHistory, winnerTypes, blockPerformance } =
+    dashboardData;
 
   const formatCurrency = (value: number | null) => {
     if (value === null) return '-';
@@ -91,14 +31,11 @@ export default function HomePage() {
     return num.toLocaleString();
   };
 
-  const formatPrizeDisplay = (prizeJson: string | null) => {
-    if (!prizeJson) return '-';
-    try {
-      const parsed = JSON.parse(prizeJson);
-      return `${parsed.amount} ${parsed.currency || 'ORE'}`;
-    } catch {
-      return prizeJson;
-    }
+  const formatPrizeDisplay = () => {
+    if (!latestRound) return '-';
+    const totalPrize =
+      latestRound.vaulted + latestRound.winnings + (latestRound.motherlode_value ?? 0);
+    return `${totalPrize.toLocaleString()} ORE`;
   };
 
   const formatCountdown = (endTime: string | null) => {
@@ -106,33 +43,17 @@ export default function HomePage() {
     const end = new Date(endTime);
     const now = new Date();
     const diff = end.getTime() - now.getTime();
-    
+
     if (diff <= 0) return 'Ended';
-    
+
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    
+
     if (days > 0) return `${days}d ${hours}h`;
     if (hours > 0) return `${hours}h ${minutes}m`;
     return `${minutes}m`;
   };
-
-  if (loading && !stats) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b] flex items-center justify-center">
-        <div className="text-xl text-rore-textMuted">Loading...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b] flex items-center justify-center">
-        <div className="text-xl text-red-500">{error}</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b] p-4 md:p-8">
@@ -150,7 +71,7 @@ export default function HomePage() {
           <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
             <h3 className="text-sm font-medium text-rore-textMuted uppercase">ORE Price</h3>
             <p className="mt-2 text-3xl font-bold text-rore-primary">
-              {formatCurrency(stats?.ore_price_usd || null)}
+              {formatCurrency(latestPrices.ore_price_usd)}
             </p>
           </div>
 
@@ -158,26 +79,26 @@ export default function HomePage() {
           <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
             <h3 className="text-sm font-medium text-rore-textMuted uppercase">WETH Price</h3>
             <p className="mt-2 text-3xl font-bold text-rore-secondary">
-              {formatCurrency(stats?.weth_price_usd || null)}
+              {formatCurrency(latestPrices.weth_price_usd)}
             </p>
           </div>
 
           {/* Current Round Card */}
           <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
             <h3 className="text-sm font-medium text-rore-textMuted uppercase">Current Round</h3>
-            {stats?.current_round ? (
+            {latestRound ? (
               <div className="mt-2 space-y-1">
                 <p className="text-lg font-bold text-rore-text">
-                  #{stats.current_round.round_number}
+                  #{latestRound.round_id}
                 </p>
                 <p className="text-sm text-rore-textMuted">
-                  Prize: {formatPrizeDisplay(stats.current_round.prize)}
+                  Prize: {formatPrizeDisplay()}
                 </p>
                 <p className="text-sm text-rore-textMuted">
-                  Entries: {formatNumber(stats.current_round.entries)}
+                  Entries: {formatNumber(latestRound.winners)}
                 </p>
                 <p className="text-sm font-medium text-rore-text">
-                  Ends in: {formatCountdown(stats.current_round.end_time)}
+                  Ends in: {formatCountdown(latestRound.end_timestamp)}
                 </p>
               </div>
             ) : (
@@ -189,22 +110,17 @@ export default function HomePage() {
           <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
             <h3 className="text-sm font-medium text-rore-textMuted uppercase">Motherlode Total</h3>
             <p className="mt-2 text-3xl font-bold text-rore-success">
-              {formatNumber(stats?.motherlode_ore || null)} ORE
+              {formatNumber(latestRound?.motherlode_running ?? null)} ORE
             </p>
           </div>
         </div>
 
-        {/* Price Chart */}
-        <PriceChart data={priceHistory} />
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <WinnerTypesPie data={winnerTypes} />
+          <BlockPerformanceBar data={blockPerformance} />
+        </div>
 
-        {/* Motherlode Allocation Donut */}
-        <MotherlodeAllocationDonut roundData={latestRound} />
-
-        {/* Rounds per Day Bar */}
-        <RoundsPerDayBar />
-
-        {/* Motherlode Over Time (optional) */}
-        {/* <MotherlodeChart data={[]} /> Uncomment if desired */}
+        <MotherlodeChart data={motherlodeHistory} />
 
         {/* Footer */}
         <footer className="text-center text-rore-textSubtle text-sm py-4">

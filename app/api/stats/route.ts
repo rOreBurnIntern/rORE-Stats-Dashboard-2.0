@@ -1,35 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import { toApiPrice, toApiRound, toNumber } from '../_lib/dashboardTransforms';
+import { getLatestPrices, getLatestRound } from '@/lib/db-stats';
+import { toApiRound } from '../_lib/dashboardTransforms';
 
-const PRICE_SELECT = 'ore_price_usd:ore_usd, weth_price_usd:weth_usd, timestamp:api_timestamp';
-
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const { data: latestPrice, error: priceError } = await supabaseAdmin
-      .from('prices')
-      .select(PRICE_SELECT)
-      .order('api_timestamp', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (priceError) {
-      Sentry.captureException(priceError, { tags: { route: 'stats', operation: 'fetch-price' } });
-      console.error('Error fetching latest price:', priceError);
-    }
-
-    const { data: latestRound, error: roundError } = await supabaseAdmin
-      .from('rounds')
-      .select('round_id, vaulted, winnings, motherlode_value, motherlode_running, end_timestamp, winners')
-      .order('round_id', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    if (roundError) {
-      Sentry.captureException(roundError, { tags: { route: 'stats', operation: 'fetch-round' } });
-      console.error('Error fetching latest round:', roundError);
-    }
+    const [latestPrice, latestRound] = await Promise.all([getLatestPrices(), getLatestRound()]);
 
     if (!latestRound) {
       return NextResponse.json(
@@ -38,14 +14,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const price = latestPrice ? toApiPrice(latestPrice) : null;
     const currentRound = toApiRound(latestRound);
 
     return NextResponse.json({
-      ore_price_usd: price?.ore_price_usd ?? null,
-      weth_price_usd: price?.weth_price_usd ?? null,
+      ore_price_usd: latestPrice.ore_price_usd,
+      weth_price_usd: latestPrice.weth_price_usd,
       current_round: currentRound,
-      motherlode_ore: toNumber(latestRound.motherlode_running),
+      motherlode_ore: latestRound.motherlode_running,
     });
   } catch (err) {
     Sentry.captureException(err, { tags: { route: 'stats' } });

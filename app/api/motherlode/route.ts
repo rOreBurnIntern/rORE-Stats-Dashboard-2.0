@@ -1,49 +1,22 @@
-// @ts-nocheck
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { getMotherlodeHistory } from '@/lib/db-stats';
 
 export async function GET(request: NextRequest) {
   try {
-    // Parse query parameters
     const searchParams = request.nextUrl.searchParams;
-    const limit = parseInt(searchParams.get('limit') ?? '100', 10);
+    const limitParam = searchParams.get('limit');
+    const limit = limitParam ? parseInt(limitParam, 10) : undefined;
 
-    // Validate parameters
-    if (limit < 1 || limit > 1000) {
+    if (limitParam && (!Number.isInteger(limit) || (limit ?? 0) < 1)) {
       return NextResponse.json(
-        { error: 'Invalid limit parameter (max 1000)' },
+        { error: 'Invalid limit parameter' },
         { status: 400 }
       );
     }
 
-    // Fetch motherlode history from protocol_stats table, ordered by timestamp DESC
-    // The protocol_stats column is a JSONB object containing the 'motherlode' key
-    const { data, error } = await supabaseAdmin
-      .from('protocol_stats')
-      .select('protocol_stats, timestamp')
-      .order('timestamp', { ascending: false })
-      .limit(limit);
+    const history = await getMotherlodeHistory(limit);
 
-    if (error) {
-      Sentry.captureException(error, { tags: { route: 'motherlode', operation: 'fetch' } });
-      console.error('Error fetching motherlode history:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch motherlode history' },
-        { status: 500 }
-      );
-    }
-
-    // Transform data: extract motherlode value from the JSONB column
-    const history = (data ?? []).map(item => {
-      const motherlodeVal = item.protocol_stats?.motherlode;
-      return {
-        timestamp: item.timestamp,
-        motherlode_ore: motherlodeVal !== undefined && motherlodeVal !== null ? parseFloat(String(motherlodeVal)) : 0,
-      };
-    });
-
-    // Return the data in the expected format
     return NextResponse.json({
       motherlode_history: history,
     });
