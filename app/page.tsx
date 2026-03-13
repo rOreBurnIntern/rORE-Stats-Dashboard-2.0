@@ -7,13 +7,17 @@ export const revalidate = 60;
 
 export default async function HomePage() {
   let dashboardData: Awaited<ReturnType<typeof getDbStatsData>>;
+  const statCardClass =
+    'rounded-2xl border border-rore-border bg-rore-card/90 p-6 shadow-rore backdrop-blur transition hover:border-rore-borderHover hover:shadow-glow';
 
   try {
     dashboardData = await getDbStatsData();
   } catch {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b]">
-        <div className="text-xl text-red-500">Failed to load dashboard data</div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-rore-background via-rore-backgroundAlt to-rore-card">
+        <div className="rounded-2xl border border-rore-border bg-rore-card px-6 py-5 text-xl text-rore-secondary shadow-glow">
+          Failed to load dashboard data
+        </div>
       </div>
     );
   }
@@ -56,41 +60,38 @@ export default async function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b] p-4 md:p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <header>
-          <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rore-primary to-[#60a5fa]">
+    <div className="min-h-screen bg-gradient-to-br from-rore-background via-rore-backgroundAlt to-rore-card p-4 md:p-8">
+      <div className="mx-auto max-w-7xl space-y-8">
+        <header className="rounded-3xl border border-rore-border bg-rore-card/70 px-6 py-7 shadow-rore backdrop-blur">
+          <h1 className="bg-gradient-to-r from-rore-primary via-rore-motherlode to-rore-secondary bg-clip-text text-3xl font-bold text-transparent md:text-4xl">
             rORE Stats Dashboard
           </h1>
-          <p className="text-rore-textMuted mt-2">Real-time statistics for rORE protocol</p>
+          <p className="mt-3 max-w-2xl text-sm text-rore-textMuted md:text-base">
+            Real-time protocol pricing, block outcomes, and motherlode history styled to match the
+            dashboard PRD.
+          </p>
         </header>
 
-        {/* Stats Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* ORE Price Card */}
-          <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+          <div className={statCardClass}>
             <h3 className="text-sm font-medium text-rore-textMuted uppercase">ORE Price</h3>
             <p className="mt-2 text-3xl font-bold text-rore-primary">
               {formatCurrency(latestPrices.ore_price_usd)}
             </p>
           </div>
 
-          {/* WETH Price Card */}
-          <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
+          <div className={statCardClass}>
             <h3 className="text-sm font-medium text-rore-textMuted uppercase">WETH Price</h3>
             <p className="mt-2 text-3xl font-bold text-rore-secondary">
               {formatCurrency(latestPrices.weth_price_usd)}
             </p>
           </div>
 
-          {/* Current Round Card */}
-          <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
+          <div className={statCardClass}>
             <h3 className="text-sm font-medium text-rore-textMuted uppercase">Current Round</h3>
             {latestRound ? (
               <div className="mt-2 space-y-1">
-                <p className="text-lg font-bold text-rore-text">
-                  #{latestRound.round_id}
-                </p>
+                <p className="text-lg font-bold text-rore-text">#{latestRound.round_id}</p>
                 <p className="text-sm text-rore-textMuted">
                   Prize: {formatPrizeDisplay()}
                 </p>
@@ -106,10 +107,9 @@ export default async function HomePage() {
             )}
           </div>
 
-          {/* Motherlode Card */}
-          <div className="bg-rore-card/50 backdrop-blur border border-rore-border rounded-lg shadow p-6">
+          <div className={statCardClass}>
             <h3 className="text-sm font-medium text-rore-textMuted uppercase">Motherlode Total</h3>
-            <p className="mt-2 text-3xl font-bold text-rore-success">
+            <p className="mt-2 text-3xl font-bold text-rore-motherlode">
               {formatNumber(latestRound?.motherlode_running ?? null)} ORE
             </p>
           </div>
@@ -122,7 +122,6 @@ export default async function HomePage() {
 
         <MotherlodeChart data={motherlodeHistory} />
 
-        {/* Footer */}
         <footer className="text-center text-rore-textSubtle text-sm py-4">
           <p>Last updated: {new Date().toLocaleTimeString()}</p>
         </footer>

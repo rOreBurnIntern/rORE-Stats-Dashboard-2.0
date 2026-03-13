@@ -3,24 +3,43 @@
 @tailwind utilities;
 
 :root {
-  /* rORE.supply dark theme colors */
-  --rore-background: #0a0a0b;
-  --rore-card: #111113;
-  --rore-border: #1a1a1f;
-  --rore-borderHover: #27272a;
-  --rore-primary: #3b82f6;
-  --rore-secondary: #fbbf24;
-  --rore-success: #22c55e;
-  --rore-motherlode: #a855f7;
-  --rore-text: #fafafa;
-  --rore-textMuted: #a1a1aa;
-  --rore-textSubtle: #71717a;
+  --rore-background: #090805;
+  --rore-backgroundAlt: #120c08;
+  --rore-card: #15100b;
+  --rore-cardElevated: #21160d;
+  --rore-border: #3a2413;
+  --rore-borderHover: #6a3917;
+  --rore-primary: #ff6b00;
+  --rore-secondary: #ff3d00;
+  --rore-success: #ffd089;
+  --rore-motherlode: #ffb15c;
+  --rore-text: #fff3e8;
+  --rore-textMuted: #d7b9a1;
+  --rore-textSubtle: #8e725f;
 
-  /* Gradient for main background */
-  --rore-gradient-start: #0a0a0b;
-  --rore-gradient-mid: #111113;
-  --rore-gradient-end: #18181b;
+  --rore-gradient-start: #090805;
+  --rore-gradient-mid: #120c08;
+  --rore-gradient-end: #26160b;
+  --rore-panel-glow: rgba(255, 107, 0, 0.18);
 
-  /* Existing variable used in components */
   --relay-colors-gray-7: #27272a;
+}
+
+html {
+  background:
+    radial-gradient(circle at top, rgba(255, 107, 0, 0.14), transparent 34%),
+    linear-gradient(180deg, var(--rore-gradient-start), var(--rore-gradient-end));
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(255, 107, 0, 0.14), transparent 34%),
+    linear-gradient(180deg, var(--rore-gradient-start), var(--rore-gradient-end));
+  color: var(--rore-text);
+}
+
+::selection {
+  background: rgba(255, 107, 0, 0.3);
+  color: var(--rore-text);
 }
