@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import type { TablesInsert } from '@/types/supabase';
 
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -11,12 +10,19 @@ const BATCH_SIZE = Number(process.env.ROUNDS_UPSERT_BATCH_SIZE ?? 250);
 const MAX_PAGES_PER_RUN = Number(process.env.ROUNDS_MAX_PAGES_PER_RUN ?? 50);
 const FULL_BACKFILL = process.env.FULL_BACKFILL === 'true';
 
+async function getSupabaseAdmin() {
+  const { supabaseAdmin } = await import('@/lib/supabaseAdmin');
+  return supabaseAdmin;
+}
+
 export async function POST(request: NextRequest) {
   const startedAt = new Date().toISOString();
   let roundsSynced = 0;
   let errorMessage: string | null = null;
 
   try {
+    const supabaseAdmin = await getSupabaseAdmin();
+
     // Authenticate
     const authHeader = request.headers.get('authorization');
     if (!CRON_SECRET || !authHeader || authHeader !== `Bearer ${CRON_SECRET}`) {
@@ -186,6 +192,7 @@ export async function POST(request: NextRequest) {
 
 async function logSync(jobType: string, status: string, errorMessage: string | null, roundsSynced: number, started: string, finished: string) {
   try {
+    const supabaseAdmin = await getSupabaseAdmin();
     await supabaseAdmin.from('sync_log').insert({
       job_type: jobType,
       status: status,
@@ -314,6 +321,7 @@ function parseNumeric(val: unknown): number {
 }
 
 async function updateSyncMetadata(lastRoundId: number, nextCursor: string | null): Promise<void> {
+  const supabaseAdmin = await getSupabaseAdmin();
   const { error } = await supabaseAdmin.from('sync_metadata').upsert({
     id: 'rounds',
     last_synced_at: new Date().toISOString(),

@@ -39,21 +39,6 @@ export default function HistoryPage() {
     fetchRounds(1);
   }, []);
 
-  const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleString();
-  };
-
-  const formatPrize = (prize: string | null) => {
-    if (!prize) return '-';
-    try {
-      const parsed = JSON.parse(prize);
-      return `${parsed.amount} ${parsed.currency || 'ORE'}`;
-    } catch {
-      return prize;
-    }
-  };
-
   if (loading && rounds.length === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0a0a0b] via-[#111113] to-[#18181b] flex items-center justify-center">

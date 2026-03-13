@@ -57,7 +57,7 @@ export function toApiRound(round: RoundApiRow, nowIso = new Date().toISOString()
     round_number: round.round_id,
     prize: JSON.stringify({
       amount: totalPrize.toFixed(8),
-      currency: 'ORE',
+      currency: 'rORE',
     }),
     entries: round.winners,
     start_time: null,

@@ -33,11 +33,11 @@ Key columns in `rounds`: `round_id`, `block_number`, `winner_take_all`, `motherl
 - ✅ **P0/P1 implementation completed** (commit a6962fc on branch `task/p0-p1-complete`): DB-backed data path wired, motherlode history uncapped, winner types limited to 1,044 rounds, charts replaced with react-chartjs-2, zoom/pan added, layout fixed.
 - ✅ **P1-2 theme colors completed** (2026-03-13): Extracted rORE.supply brand palette and applied across dashboard (orange/amber tokens, gradient backgrounds, glow effects, Chart.js theming). Build passes, unit tests pass (10/10).
 - 🚀 Ready for merge to main and redeployment to Vercel.
-- ⏳ Remaining P1 tasks: P1-3 (Burncoin text removal), P1-4 (header cleanup), P1-5 (DaisyUI strip). P2 cleanup and secondary priorities pending: Discord FAQ, Social Media, Onboarding.
+- ⏳ Remaining P1 tasks: P1-3 (legacy text cleanup), P1-4 (header cleanup), P1-5 (DaisyUI strip). P2 cleanup and secondary priorities pending: Discord FAQ, Social Media, Onboarding.
 
 ## Next Actions
 1. Review and merge `task/p0-p1-complete` to main, then trigger Vercel redeploy.
-2. Implement P1-3: Remove all "Burncoin" text references.
+2. Implement P1-3: Remove all legacy-name text references.
 3. Implement P1-4: Remove double header (DashboardHeader).
 4. Implement P1-5: Strip DaisyUI CSS and replace with Tailwind.
 5. Complete P2 cleanup tasks.

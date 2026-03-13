@@ -60,7 +60,7 @@ export default function RoundTable({ initialRounds, initialPage, initialHasMore 
     if (!prize) return '-';
     try {
       const parsed = JSON.parse(prize);
-      return `${parsed.amount} ${parsed.currency || 'ORE'}`;
+      return `${parsed.amount} ${parsed.currency || 'rORE'}`;
     } catch {
       return prize;
     }

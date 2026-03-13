@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import type { TablesInsert } from '@/types/supabase';
 
 const CRON_SECRET = process.env.CRON_SECRET;
+
+async function getSupabaseAdmin() {
+  const { supabaseAdmin } = await import('@/lib/supabaseAdmin');
+  return supabaseAdmin;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -46,6 +50,7 @@ export async function POST(request: NextRequest) {
       weth_usd: wethPriceUsd,
     };
 
+    const supabaseAdmin = await getSupabaseAdmin();
     const { error: insertError } = await supabaseAdmin.from('prices').insert(record);
     if (insertError) {
       throw insertError;
@@ -67,6 +72,7 @@ export async function POST(request: NextRequest) {
 
 async function logSync(jobType: string, status: string, errorMessage: string | null, roundsSynced: number) {
   try {
+    const supabaseAdmin = await getSupabaseAdmin();
     await supabaseAdmin.from('sync_log').insert({
       job_type: jobType,
       status: status,

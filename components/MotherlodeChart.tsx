@@ -31,7 +31,7 @@ export default function MotherlodeChart({ data }: MotherlodeChartProps) {
   const chartData: ChartData<'line'> = {
     datasets: [
       {
-        label: 'Motherlode ORE',
+        label: 'Motherlode rORE',
         data: data.map((item) => ({
           x: item.round_number,
           y: item.motherlode_ore,
@@ -71,7 +71,7 @@ export default function MotherlodeChart({ data }: MotherlodeChartProps) {
       y: {
         ticks: {
           color: '#a1a1aa',
-          callback: (value) => `${Number(value).toLocaleString()} ORE`,
+          callback: (value) => `${Number(value).toLocaleString()} rORE`,
         },
         grid: {
           color: '#1a1a1f',
@@ -93,7 +93,7 @@ export default function MotherlodeChart({ data }: MotherlodeChartProps) {
             const firstItem = items[0];
             return firstItem ? `Round #${Number(firstItem.parsed.x).toLocaleString()}` : '';
           },
-          label: (context) => `${Number(context.parsed.y).toLocaleString()} ORE`,
+          label: (context) => `${Number(context.parsed.y).toLocaleString()} rORE`,
           footer: (items) => {
             const point = data[items[0]?.dataIndex ?? -1];
             return point ? new Date(point.timestamp).toLocaleString() : '';
@@ -139,7 +139,7 @@ export default function MotherlodeChart({ data }: MotherlodeChartProps) {
         <Line data={chartData} options={options} ref={chartRef} />
       </div>
       <div className="mt-2 text-sm text-rore-textMuted text-right">
-        Peak: {maxMotherlode.toLocaleString()} ORE
+        Peak: {maxMotherlode.toLocaleString()} rORE
       </div>
     </div>
   );

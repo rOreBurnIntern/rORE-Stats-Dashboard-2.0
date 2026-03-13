@@ -50,5 +50,5 @@ Implement data layer and wire frontend to use Supabase directly to satisfy PRD v
 ## Out of scope for this sprint
 - P1-1: Switch to react-chartjs-2 (later)
 - P1-3: Theme color updates (blocked)
-- P2 cleanups (extra components, Burncoin text removal, header issues)
+- P2 cleanups (extra components, legacy text cleanup, header issues)
 - P3 polish

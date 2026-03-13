@@ -40,7 +40,7 @@ export default async function HomePage() {
     if (!latestRound) return '-';
     const totalPrize =
       latestRound.vaulted + latestRound.winnings + (latestRound.motherlode_value ?? 0);
-    return `${totalPrize.toLocaleString()} ORE`;
+    return `${totalPrize.toLocaleString()} rORE`;
   };
 
   const formatCountdown = (endTime: string | null) => {
@@ -75,7 +75,7 @@ export default async function HomePage() {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <div className={statCardClass}>
-            <h3 className="text-sm font-medium text-rore-textMuted uppercase">ORE Price</h3>
+            <h3 className="text-sm font-medium text-rore-textMuted uppercase">rORE Price</h3>
             <p className="mt-2 text-3xl font-bold text-rore-primary">
               {formatCurrency(latestPrices.ore_price_usd)}
             </p>
@@ -111,7 +111,7 @@ export default async function HomePage() {
           <div className={statCardClass}>
             <h3 className="text-sm font-medium text-rore-textMuted uppercase">Motherlode Total</h3>
             <p className="mt-2 text-3xl font-bold text-rore-motherlode">
-              {formatNumber(latestRound?.motherlode_running ?? null)} ORE
+              {formatNumber(latestRound?.motherlode_running ?? null)} rORE
             </p>
           </div>
         </div>

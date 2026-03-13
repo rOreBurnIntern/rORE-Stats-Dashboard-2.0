@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { toApiRound } from '../_lib/dashboardTransforms';
 
 export async function GET(request: NextRequest) {
   try {
+    const { supabaseAdmin } = await import('@/lib/supabaseAdmin');
     const searchParams = request.nextUrl.searchParams;
     const page = parseInt(searchParams.get('page') ?? '1', 10);
     const limit = parseInt(searchParams.get('limit') ?? '50', 10);

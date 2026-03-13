@@ -97,9 +97,9 @@ Two independent audits flagged the same core problems. This is the single priori
 
 ## P2 — Cleanup & Polish
 
-### P2-1: Remove all "Burncoin" text
-- **Problem:** Kicker text still says "Burncoin outcomes", "Burncoin reserves"
-- **Fix:** Global find-and-replace: `Burncoin` → `rORE` across all components, copy strings, and metadata
+### P2-1: Remove all legacy brand text
+- **Problem:** Kicker text still says the pre-`rORE` product name in user-facing copy
+- **Fix:** Global find-and-replace so all components, copy strings, and metadata consistently use `rORE`
 
 ### P2-2: Remove extra unrequested components
 - Remove or gate behind a flag:
@@ -161,7 +161,7 @@ P0-1 (wire DB data) → P0-2 (uncap history) → P0-3 (scope winner types)
   ↓
 P1-1 (install react-chartjs-2, replace charts) → P1-2 (add zoom)
   ↓
-P1-4 (fix layout) → P2-1 (remove Burncoin text)
+P1-4 (fix layout) → P2-1 (remove legacy brand text)
   ↓
 P2-2 through P2-6 (cleanup)
   ↓

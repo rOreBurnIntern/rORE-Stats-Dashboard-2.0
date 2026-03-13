@@ -1,8 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+export const dynamic = 'force-dynamic';
+
+export async function GET() {
   try {
+    const { supabaseAdmin } = await import('@/lib/supabaseAdmin');
+
     // Fetch the latest round by round_id
     const { data, error } = await supabaseAdmin
       .from('rounds')

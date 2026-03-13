@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
 export async function GET(request: NextRequest) {
   try {
+    const { supabaseAdmin } = await import('@/lib/supabaseAdmin');
     const searchParams = request.nextUrl.searchParams;
     const days = parseInt(searchParams.get('days') ?? '30', 10);
     const limit = Math.min(Number(searchParams.get('limit') ?? '10000'), 10000); // safety cap

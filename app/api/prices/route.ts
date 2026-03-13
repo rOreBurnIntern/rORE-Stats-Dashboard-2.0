@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as Sentry from '@sentry/nextjs';
-import { supabaseAdmin } from '@/lib/supabaseAdmin';
 import { parseHoursRange, toApiPrice } from '../_lib/dashboardTransforms';
 
 const PRICE_SELECT = 'ore_price_usd:ore_usd, weth_price_usd:weth_usd, timestamp:api_timestamp';
 
 export async function GET(request: NextRequest) {
   try {
+    const { supabaseAdmin } = await import('@/lib/supabaseAdmin');
     const searchParams = request.nextUrl.searchParams;
     const range = parseHoursRange(searchParams.get('range'));
 

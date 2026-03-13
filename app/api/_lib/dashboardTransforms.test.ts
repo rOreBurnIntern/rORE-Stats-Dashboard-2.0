@@ -53,7 +53,7 @@ test('toApiRound shapes active rounds with prize total and null start time', () 
     ),
     {
       round_number: 42,
-      prize: JSON.stringify({ amount: '15.50000000', currency: 'ORE' }),
+      prize: JSON.stringify({ amount: '15.50000000', currency: 'rORE' }),
       entries: 7,
       start_time: null,
       end_time: '2026-03-12T01:00:00.000Z',
@@ -78,7 +78,7 @@ test('toApiRound marks completed rounds and includes motherlode value in the pri
     ),
     {
       round_number: 43,
-      prize: JSON.stringify({ amount: '18.75000000', currency: 'ORE' }),
+      prize: JSON.stringify({ amount: '18.75000000', currency: 'rORE' }),
       entries: 2,
       start_time: null,
       end_time: '2026-03-11T23:00:00.000Z',

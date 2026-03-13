@@ -3,6 +3,8 @@ import * as Sentry from '@sentry/nextjs';
 import { getLatestPrices, getLatestRound } from '@/lib/db-stats';
 import { toApiRound } from '../_lib/dashboardTransforms';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const [latestPrice, latestRound] = await Promise.all([getLatestPrices(), getLatestRound()]);
