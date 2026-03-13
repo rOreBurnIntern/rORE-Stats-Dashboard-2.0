@@ -4,6 +4,7 @@ import WinnerTypesPie from '@/components/WinnerTypesPie';
 import { getDbStatsData } from '@/lib/db-stats';
 
 export const revalidate = 60;
+export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
   let dashboardData: Awaited<ReturnType<typeof getDbStatsData>>;
